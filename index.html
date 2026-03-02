@@ -3,53 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeenGuide - آسان دین</title>
+    <title>DeenGuide - اعلیٰ حضرت حنفی فقہ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Noto Sans Arabic', system-ui; }
+        .tab-btn.active { border-bottom: 3px solid #10b981; color: #10b981; font-weight: bold; }
     </style>
 </head>
 <body class="bg-emerald-50 min-h-screen">
     <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl">
-        <div class="bg-emerald-600 text-white p-6 text-center">
+        <div class="bg-emerald-700 text-white p-6 text-center">
             <h1 class="text-3xl font-bold">🌙 DeenGuide</h1>
-            <p class="text-emerald-100">عصر حاضر میں دین کو آسان بنائیں</p>
+            <p class="text-emerald-100">حنفی فقہ • اعلیٰ حضرت امام احمد رضا خان<br>امام اہلسنت والجماعت</p>
         </div>
 
-        <div class="flex border-b sticky top-0 bg-white z-10">
-            <button onclick="showSection(0)" class="flex-1 py-4 font-medium text-emerald-600 border-b-2 border-emerald-600">نماز اوقات</button>
-            <button onclick="showSection(1)" class="flex-1 py-4 font-medium">قبلہ</button>
-            <button onclick="showSection(2)" class="flex-1 py-4 font-medium">زکوٰۃ</button>
+        <div class="flex border-b bg-white sticky top-0 z-10 overflow-x-auto">
+            <button onclick="showSection(0)" class="tab-btn flex-1 py-4 text-sm active">نماز اوقات</button>
+            <button onclick="showSection(1)" class="tab-btn flex-1 py-4 text-sm">قبلہ</button>
+            <button onclick="showSection(2)" class="tab-btn flex-1 py-4 text-sm">زکوٰۃ</button>
+            <button onclick="showSection(3)" class="tab-btn flex-1 py-4 text-sm">قرآن</button>
+            <button onclick="showSection(4)" class="tab-btn flex-1 py-4 text-sm">حدیث</button>
+            <button onclick="showSection(5)" class="tab-btn flex-1 py-4 text-sm">رضوی تعلیمات</button>
         </div>
 
+        <!-- نماز اوقات -->
         <div id="section0" class="p-6">
-            <h2 class="text-xl font-bold mb-4">نماز کے اوقات</h2>
+            <h2 class="text-xl font-bold mb-4">حنفی نماز کے اوقات</h2>
             <input id="city" type="text" placeholder="شہر کا نام (مثلاً Pune)" class="w-full p-4 border rounded-xl mb-4 text-lg">
-            <button onclick="getPrayerTimes()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold text-lg">اوقات دیکھیں</button>
+            <button onclick="getPrayerTimes()" class="w-full bg-emerald-700 text-white py-4 rounded-2xl font-bold text-lg">اوقات دیکھیں</button>
             <div id="prayerResult" class="mt-6 space-y-3"></div>
         </div>
 
+        <!-- قبلہ -->
         <div id="section1" class="p-6 hidden">
             <h2 class="text-xl font-bold mb-4">قبلہ کمپاس</h2>
-            <button onclick="getQibla()" class="w-full bg-emerald-600 text-white py-6 rounded-3xl font-bold text-xl mb-8">📍 میرا مقام استعمال کرو</button>
-            <div id="qiblaResult" class="text-center text-6xl font-bold text-emerald-700"></div>
-            <p class="text-center mt-4 text-gray-600">ڈگری: <span id="degree"></span></p>
+            <button onclick="getQibla()" class="w-full bg-emerald-700 text-white py-6 rounded-3xl font-bold text-xl">📍 میرا مقام استعمال کرو</button>
+            <div id="qiblaResult" class="mt-8 text-center text-7xl font-bold text-emerald-700"></div>
+            <p id="degree" class="text-center mt-4 text-gray-600 text-lg"></p>
         </div>
 
+        <!-- زکوٰۃ -->
         <div id="section2" class="p-6 hidden">
             <h2 class="text-xl font-bold mb-4">زکوٰۃ کیلکولیٹر</h2>
-            <div class="space-y-4">
-                <input id="gold" type="number" placeholder="سونے کی مالیت (روپے)" class="w-full p-4 border rounded-xl">
-                <input id="cash" type="number" placeholder="نقدی / بینک" class="w-full p-4 border rounded-xl">
-                <input id="other" type="number" placeholder="دیگر اثاثے" class="w-full p-4 border rounded-xl">
-                <button onclick="calculateZakat()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold">زکوٰۃ نکالیں</button>
-            </div>
+            <input id="gold" type="number" placeholder="سونے/چاندی کی مالیت" class="w-full p-4 border rounded-xl mb-3">
+            <input id="cash" type="number" placeholder="نقدی / بینک" class="w-full p-4 border rounded-xl mb-3">
+            <input id="other" type="number" placeholder="دیگر اثاثے" class="w-full p-4 border rounded-xl mb-3">
+            <button onclick="calculateZakat()" class="w-full bg-emerald-700 text-white py-4 rounded-2xl font-bold">زکوٰۃ نکالیں</button>
             <div id="zakatResult" class="mt-6 p-6 bg-emerald-50 rounded-3xl text-center text-xl font-bold"></div>
         </div>
 
-        <div class="p-6 text-xs text-gray-500 border-t">
-            <p class="font-bold">⚠️ اہم نوٹ:</p>
-            <p>یہ ٹولز عمومی ہیں۔ ذاتی فتویٰ کے لیے مستند عالم سے رجوع کریں۔</p>
+        <!-- قرآن -->
+        <div id="section3" class="p-6 hidden">
+            <h2 class="text-xl font-bold mb-4">روزانہ قرآن</h2>
+            <div class="bg-emerald-50 p-6 rounded-3xl text-center">
+                <p class="text-2xl font-bold">﴿ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ﴾</p>
+                <p class="text-lg mt-4">الحمد للہ رب العالمین</p>
+                <p class="text-sm text-gray-600 mt-6">سورۃ الفاتحہ • اعلیٰ حضرت نے اس کی بہت تعریف فرمائی</p>
+            </div>
+        </div>
+
+        <!-- حدیث -->
+        <div id="section4" class="p-6 hidden">
+            <h2 class="text-xl font-bold mb-4">روزانہ حدیث</h2>
+            <div class="bg-emerald-50 p-6 rounded-3xl">
+                <p class="italic">"الدعاء مخ العبادۃ"</p>
+                <p class="text-sm text-gray-600 mt-4">صحیح بخاری • اعلیٰ حضرت نے اس کی شرح فرمائی</p>
+            </div>
+        </div>
+
+        <!-- رضوی تعلیمات -->
+        <div id="section5" class="p-6 hidden">
+            <h2 class="text-xl font-bold mb-4">اعلیٰ حضرت کی تعلیمات</h2>
+            <div class="space-y-6 text-center">
+                <div class="bg-emerald-50 p-6 rounded-3xl">
+                    <p class="font-bold text-emerald-700">میلاد النبی ﷺ</p>
+                    <p class="text-sm mt-3">اعلیٰ حضرت نے فرمایا: "میلاد شریف پڑھنا سنت ہے" — فتاویٰ رضویہ</p>
+                </div>
+                <div class="bg-emerald-50 p-6 rounded-3xl">
+                    <p class="font-bold text-emerald-700">گیارہویں شریف</p>
+                    <p class="text-sm mt-3">حضرت غوث اعظمؓ کی روح کو ایصال ثواب — اعلیٰ حضرت کی مستند تعلیم</p>
+                </div>
+                <div class="bg-emerald-50 p-6 rounded-3xl">
+                    <p class="font-bold text-emerald-700">مسنون دعا</p>
+                    <p class="text-sm mt-3">"یا رب صلی علی محمد ﷺ" — فتاویٰ رضویہ جلد 23</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="p-6 text-xs text-gray-500 border-t bg-emerald-50">
+            <p class="font-bold text-red-600">⚠️ اہم نوٹ:</p>
+            <p>یہ ٹولز اعلیٰ حضرت امام احمد رضا خان (رحمۃ اللہ علیہ) کی حنفی تعلیمات کے مطابق ہیں۔<br>
+            ذاتی فتویٰ کے لیے مستند عالم سے رجوع کریں۔</p>
         </div>
     </div>
 
@@ -57,6 +102,8 @@
         function showSection(n) {
             document.querySelectorAll('[id^="section"]').forEach(s => s.classList.add('hidden'));
             document.getElementById('section'+n).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn')[n].classList.add('active');
         }
 
         async function getPrayerTimes() {
@@ -66,41 +113,37 @@
                 const res = await fetch(url);
                 const data = await res.json();
                 const t = data.data.timings;
-                let html = `<div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>فجر</b><br>${t.Fajr}</div>
-                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>ظہر</b><br>${t.Dhuhr}</div>
-                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>عصر</b><br>${t.Asr}</div>
-                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>مغرب</b><br>${t.Maghrib}</div>
-                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>عشاء</b><br>${t.Isha}</div>
-                </div>`;
-                document.getElementById('prayerResult').innerHTML = html;
+                document.getElementById('prayerResult').innerHTML = `
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div class="bg-emerald-50 p-4 rounded-2xl"><b>فجر</b><br>${t.Fajr}</div>
+                        <div class="bg-emerald-50 p-4 rounded-2xl"><b>ظہر</b><br>${t.Dhuhr}</div>
+                        <div class="bg-emerald-50 p-4 rounded-2xl"><b>عصر</b><br>${t.Asr}</div>
+                        <div class="bg-emerald-50 p-4 rounded-2xl"><b>مغرب</b><br>${t.Maghrib}</div>
+                        <div class="bg-emerald-50 p-4 rounded-2xl"><b>عشاء</b><br>${t.Isha}</div>
+                    </div>`;
             } catch(e) { alert('شہر کا نام چیک کریں'); }
         }
 
         async function getQibla() {
-            if (!navigator.geolocation) return alert('آپ کا براؤزر سپورٹ نہیں کرتا');
             navigator.geolocation.getCurrentPosition(async pos => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                const url = `https://api.aladhan.com/v1/qibla/\( {lat}/ \){lng}`;
-                const res = await fetch(url);
+                const res = await fetch(`https://api.aladhan.com/v1/qibla/\( {lat}/ \){lng}`);
                 const data = await res.json();
-                const degree = data.data.direction;
-                document.getElementById('qiblaResult').innerHTML = `🕋 ${degree}°`;
-                document.getElementById('degree').textContent = degree + '° قبلہ';
+                document.getElementById('qiblaResult').innerHTML = `🕋 ${data.data.direction}°`;
+                document.getElementById('degree').textContent = data.data.direction + '° قبلہ';
             });
         }
 
         function calculateZakat() {
-            const gold = parseFloat(document.getElementById('gold').value) || 0;
-            const cash = parseFloat(document.getElementById('cash').value) || 0;
-            const other = parseFloat(document.getElementById('other').value) || 0;
-            const total = gold + cash + other;
+            const total = (parseFloat(document.getElementById('gold').value)||0) + 
+                          (parseFloat(document.getElementById('cash').value)||0) + 
+                          (parseFloat(document.getElementById('other').value)||0);
             const zakat = total * 0.025;
-            document.getElementById('zakatResult').innerHTML = `کل مال: ₹\( {total.toLocaleString()}<br><span class="text-emerald-600">زکوٰۃ واجب: ₹ \){zakat.toLocaleString()}</span>`;
+            document.getElementById('zakatResult').innerHTML = `کل مال: ₹\( {total.toLocaleString()}<br><span class="text-emerald-700">زکوٰۃ: ₹ \){zakat.toLocaleString()}</span>`;
         }
 
         showSection(0);
     </script>
 </body>
-  </html>
+</html>
