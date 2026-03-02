@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeenGuide - آسان دین</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Noto Sans Arabic', system-ui; }
+    </style>
+</head>
+<body class="bg-emerald-50 min-h-screen">
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-xl">
+        <div class="bg-emerald-600 text-white p-6 text-center">
+            <h1 class="text-3xl font-bold">🌙 DeenGuide</h1>
+            <p class="text-emerald-100">عصر حاضر میں دین کو آسان بنائیں</p>
+        </div>
+
+        <div class="flex border-b sticky top-0 bg-white z-10">
+            <button onclick="showSection(0)" class="flex-1 py-4 font-medium text-emerald-600 border-b-2 border-emerald-600">نماز اوقات</button>
+            <button onclick="showSection(1)" class="flex-1 py-4 font-medium">قبلہ</button>
+            <button onclick="showSection(2)" class="flex-1 py-4 font-medium">زکوٰۃ</button>
+        </div>
+
+        <div id="section0" class="p-6">
+            <h2 class="text-xl font-bold mb-4">نماز کے اوقات</h2>
+            <input id="city" type="text" placeholder="شہر کا نام (مثلاً Pune)" class="w-full p-4 border rounded-xl mb-4 text-lg">
+            <button onclick="getPrayerTimes()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold text-lg">اوقات دیکھیں</button>
+            <div id="prayerResult" class="mt-6 space-y-3"></div>
+        </div>
+
+        <div id="section1" class="p-6 hidden">
+            <h2 class="text-xl font-bold mb-4">قبلہ کمپاس</h2>
+            <button onclick="getQibla()" class="w-full bg-emerald-600 text-white py-6 rounded-3xl font-bold text-xl mb-8">📍 میرا مقام استعمال کرو</button>
+            <div id="qiblaResult" class="text-center text-6xl font-bold text-emerald-700"></div>
+            <p class="text-center mt-4 text-gray-600">ڈگری: <span id="degree"></span></p>
+        </div>
+
+        <div id="section2" class="p-6 hidden">
+            <h2 class="text-xl font-bold mb-4">زکوٰۃ کیلکولیٹر</h2>
+            <div class="space-y-4">
+                <input id="gold" type="number" placeholder="سونے کی مالیت (روپے)" class="w-full p-4 border rounded-xl">
+                <input id="cash" type="number" placeholder="نقدی / بینک" class="w-full p-4 border rounded-xl">
+                <input id="other" type="number" placeholder="دیگر اثاثے" class="w-full p-4 border rounded-xl">
+                <button onclick="calculateZakat()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold">زکوٰۃ نکالیں</button>
+            </div>
+            <div id="zakatResult" class="mt-6 p-6 bg-emerald-50 rounded-3xl text-center text-xl font-bold"></div>
+        </div>
+
+        <div class="p-6 text-xs text-gray-500 border-t">
+            <p class="font-bold">⚠️ اہم نوٹ:</p>
+            <p>یہ ٹولز عمومی ہیں۔ ذاتی فتویٰ کے لیے مستند عالم سے رجوع کریں۔</p>
+        </div>
+    </div>
+
+    <script>
+        function showSection(n) {
+            document.querySelectorAll('[id^="section"]').forEach(s => s.classList.add('hidden'));
+            document.getElementById('section'+n).classList.remove('hidden');
+        }
+
+        async function getPrayerTimes() {
+            const city = document.getElementById('city').value || 'Pune';
+            const url = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=India&method=5`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const t = data.data.timings;
+                let html = `<div class="grid grid-cols-2 gap-4 text-center">
+                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>فجر</b><br>${t.Fajr}</div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>ظہر</b><br>${t.Dhuhr}</div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>عصر</b><br>${t.Asr}</div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>مغرب</b><br>${t.Maghrib}</div>
+                    <div class="bg-emerald-50 p-4 rounded-2xl"><b>عشاء</b><br>${t.Isha}</div>
+                </div>`;
+                document.getElementById('prayerResult').innerHTML = html;
+            } catch(e) { alert('شہر کا نام چیک کریں'); }
+        }
+
+        async function getQibla() {
+            if (!navigator.geolocation) return alert('آپ کا براؤزر سپورٹ نہیں کرتا');
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                const url = `https://api.aladhan.com/v1/qibla/\( {lat}/ \){lng}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                const degree = data.data.direction;
+                document.getElementById('qiblaResult').innerHTML = `🕋 ${degree}°`;
+                document.getElementById('degree').textContent = degree + '° قبلہ';
+            });
+        }
+
+        function calculateZakat() {
+            const gold = parseFloat(document.getElementById('gold').value) || 0;
+            const cash = parseFloat(document.getElementById('cash').value) || 0;
+            const other = parseFloat(document.getElementById('other').value) || 0;
+            const total = gold + cash + other;
+            const zakat = total * 0.025;
+            document.getElementById('zakatResult').innerHTML = `کل مال: ₹\( {total.toLocaleString()}<br><span class="text-emerald-600">زکوٰۃ واجب: ₹ \){zakat.toLocaleString()}</span>`;
+        }
+
+        showSection(0);
+    </script>
+</body>
+  </html>
